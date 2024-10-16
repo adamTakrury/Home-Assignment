@@ -28,7 +28,7 @@ else:
 
     class Question(db.Model):
         id = db.Column(db.Integer, primary_key=True)
-        question = db.Column(db.String(256), nullable=False)
+        question = db.Column(db.String(1024), nullable=False)  
         answer = db.Column(db.Text, nullable=False)
 
     # Create the database tables (only required the first time)
@@ -71,7 +71,8 @@ def ask():
         if response.status_code == 200:
             response_data = response.json()
             answer_text = response_data['choices'][0]['message']['content'].strip()
-
+            if len(answer_text)>256:
+                answer_text=answer_text[:256]
             # Save the question and answer to the database if not in testing mode
             if db:
                 new_question = Question(question=question_text, answer=answer_text)
